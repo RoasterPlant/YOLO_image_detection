@@ -329,7 +329,7 @@ def executar_predicao(image_file, model, class_names, device, score_threshold=0.
 
         #keep = torchvision.ops.nms(boxes, scores, iou_threshold) # Isso é função pronta, não use isso no seu código, a menos que queira comparar com a sua implementação apenas
         # Aplica o nosso NMS Manual
-        keep = manual_nms(boxes, scores, iou_threshold) # Aqui entra a função manual de NMS que devem implementar
+        keep = manual_nms(boxes, scores, classes, iou_threshold) # Aqui entra a função manual de NMS que devem implementar
 
         # Limita ao número máximo de caixas desejado (ex: top 10 detecções)
         max_boxes = 10
@@ -400,4 +400,4 @@ except Exception as e:
 modelo.load_state_dict(torch.load("yolov3_convertido.pth", map_location=device))
 
 # Coloque o nome da sua imagem de teste aqui
-executar_predicao("images/dog.jpg", modelo, class_names, device, score_threshold=0.5)
+executar_predicao("images/food.jpg", modelo, class_names, device, score_threshold=0.5)
