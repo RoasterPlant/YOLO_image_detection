@@ -29,9 +29,11 @@ def iou(boxes):
 
     for i in range(1, n):
         box = boxes[i]
+        intersection_area = 0
         box_pair = torch.vstack((main_box, box))
-        intersection_box = torch.Tensor([torch.amax(box_pair[:, 0], 0), torch.amin(box_pair[:, 1], 0), torch.amax(box_pair[:, 2], 0), torch.amin(box_pair[:, 3], 0)])
-        intersection_area = box_area(intersection_box)
+        intersection_box = torch.Tensor([torch.amax(box_pair[:, 0], 0), torch.amax(box_pair[:, 1], 0), torch.amin(box_pair[:, 2], 0), torch.amin(box_pair[:, 3], 0)])
+        if intersection_box[0] < intersection_box[2] and intersection_box[1] < intersection_box[3]:
+            intersection_area = box_area(intersection_box)
         iou_areas[i] = intersection_area/(main_area + box_area(box) - intersection_area)
     
     return torch.Tensor(iou_areas)
