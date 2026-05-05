@@ -378,26 +378,34 @@ def executar_predicao(image_file, model, class_names, device, score_threshold=0.
 # ==========================================
 # 6. EXECUÇÃO PRINCIPAL
 # ==========================================
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"Processamento via: {device}")
+if __name__ == "__main__":
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Processamento via: {device}")
 
-# 1. Carregue as classes
-class_names = read_classes("data/coco.names") # Certifique-se de que o arquivo tenha 80 linhas
+    # 1. Carregue as classes
+    class_names = read_classes("data/coco.names") # Certifique-se de que o arquivo tenha 80 linhas
 
-# 2. Instancie o YOLOv3
-modelo = YOLOv3(num_classes=len(class_names)).to(device)
+    # 2. Instancie o YOLOv3
+    modelo = YOLOv3(num_classes=len(class_names)).to(device)
 
-# 3. Converter e Salvar os Pesos (Rode isso a primeira vez)
-try:
-    arquivo_weights = "weights/yolov3.weights"
-    modelo = carregar_pesos_yolov3(arquivo_weights, modelo)
-    torch.save(modelo.state_dict(), "yolov3_convertido.pth")
-except Exception as e:
-    print(f"Aviso na conversão (talvez os pesos já existam ou o arquivo não foi encontrado): {e}")
+    # 3. Converter e Salvar os Pesos (Rode isso a primeira vez)
+    try:
+        arquivo_weights = "weights/yolov3.weights"
+        modelo = carregar_pesos_yolov3(arquivo_weights, modelo)
+        torch.save(modelo.state_dict(), "yolov3_convertido.pth")
+    except Exception as e:
+        print(f"Aviso na conversão (talvez os pesos já existam ou o arquivo não foi encontrado): {e}")
 
-# 4. Inferência direta!
-# Caso você já tenha salvo o .pth anteriormente, apenas carregue-o:
-modelo.load_state_dict(torch.load("yolov3_convertido.pth", map_location=device))
+    # 4. Inferência direta!
+    # Caso você já tenha salvo o .pth anteriormente, apenas carregue-o:
+    modelo.load_state_dict(torch.load("yolov3_convertido.pth", map_location=device))
 
-# Coloque o nome da sua imagem de teste aqui
-executar_predicao("images/food.jpg", modelo, class_names, device, score_threshold=0.5)
+    # Coloque o nome da sua imagem de teste aqui
+    executar_predicao("images/cat.jpg", modelo, class_names, device, score_threshold=0.5)
+
+    # Analisa todas as imagens em sequência:
+    #image_list = open("test_images.txt", 'r')
+    #for line in image_list:
+    #    image = "images/" + line.rstrip('\n')
+    #    executar_predicao(image, modelo, class_names, device, score_threshold=0.5)
+    #image_list.close()
